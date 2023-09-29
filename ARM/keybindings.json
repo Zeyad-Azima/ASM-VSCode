@@ -1,0 +1,22 @@
+[
+    {
+        "key": "ctrl+shift+1",
+        "command": "workbench.action.tasks.runTask",
+        "args": "debugq32"
+      },{
+        "key": "ctrl+shift+2",
+        "command": "workbench.action.tasks.runTask",
+        "args": "debugq64"
+      },
+      {
+        "key": "ctrl+shift+l",
+        "command": "workbench.action.tasks.runTask",
+        "args": "localdebug"
+      },
+      {
+        "key": "ctrl+shift+r",
+        "command": "workbench.action.tasks.runTask",
+        "args": "assemble-link-run"
+      }
+      
+]
