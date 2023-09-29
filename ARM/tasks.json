@@ -1,0 +1,145 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "assemble4debugq32",
+      "type": "shell",
+      "command": "arm-linux-gnueabihf-as",
+      "args": [
+        "${fileDirname}/${fileBasenameNoExtension}.s",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}-q32.o"
+      ]
+    },
+    {
+      "label": "link4debugq32",
+      "type": "shell",
+      "command": "arm-linux-gnueabihf-ld",
+      "args": [
+        "${fileDirname}/${fileBasenameNoExtension}-q32.o",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}-q32"
+      ]
+    },
+    {
+      "label": "assemble4debugq64",
+      "type": "shell",
+      "command": "aarch64-linux-gnu-as",
+      "args": [
+        "${fileDirname}/${fileBasenameNoExtension}.s",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}-q64.o"
+      ]
+    },
+    {
+      "label": "link4debugq64",
+      "type": "shell",
+      "command": "aarch64-linux-gnu-ld",
+      "args": [
+        "${fileDirname}/${fileBasenameNoExtension}-q64.o",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}-q64"
+      ]
+    },
+    {
+      "label": "assemble",
+      "type": "shell",
+      "command": "as",
+      "args": [
+        "${fileDirname}/${fileBasenameNoExtension}.s",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}.o"
+      ]
+    },
+    {
+      "label": "link",
+      "type": "shell",
+      "command": "ld",
+      "args": [
+        "${fileDirname}/${fileBasenameNoExtension}.o",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}"
+      ]
+    },
+    {
+      "label": "run",
+      "type": "shell",
+      "command": "${fileDirname}/${fileBasenameNoExtension}"
+    },
+    {
+      "label": "debugq32",
+      "type": "shell",
+      "command": "qemu-arm -g 1234 ${fileDirname}/${fileBasenameNoExtension}-q32 &; gdb-multiarch ${fileDirname}/${fileBasenameNoExtension}-q32 -q -nx -ex 'set architecture arm' -ex 'target remote 127.0.0.1:1234' -ex 'break _start'",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "assemble-link-debug32"
+      ]
+    },{
+      "label": "debugq64",
+      "type": "shell",
+      "command": "qemu-arm64 -g 5678 ${fileDirname}/${fileBasenameNoExtension}-q64 &; gdb-multiarch ${fileDirname}/${fileBasenameNoExtension}-q64 -q -nx -ex 'set architecture aarch64' -ex 'target remote 127.0.0.1:5678' -ex 'break _start'",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "assemble-link-debug64"
+      ]
+    },{
+      "label": "localdebug",
+      "type": "shell",
+      "command": "gdb-multiarch ${fileDirname}/${fileBasenameNoExtension} -q -nx -ex 'set architecture arch' -ex 'break _start' -ex 'run'",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "assemble-link-debug64"
+      ]
+    },
+    {
+      "label": "assemble-link-debug32",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "assemble4debugq32",
+        "link4debugq32"
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },{
+      "label": "assemble-link-debug64",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "assemble4debugq64",
+        "link4debugq64"
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },{
+      "label": "assemble-link-run",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "assemble",
+        "link",
+        "run"
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },{
+      "label": "assemble-link-debug-local",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "assemble",
+        "link"
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
